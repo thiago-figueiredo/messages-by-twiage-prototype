@@ -1,6 +1,6 @@
 <template>
   <div className="container mt-4">
-    <h1>Messages</h1>
+    <h1>Threads</h1>
     <keep-alive>
       <div>
         <pre>{{ error }}</pre>
@@ -19,7 +19,7 @@ export default defineComponent({
     const { data, error, fetching } = useSubscription({
       query: `
         subscription {
-          thread(where: {thread_contacts: {contact: {contact_id: {_eq: "609d948d0b6c656d5b143e19"}}}}) {
+          thread {
             thread_id
             title
             subtitle

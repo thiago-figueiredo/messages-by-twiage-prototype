@@ -26,8 +26,8 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/messages">
-              Messages
+            <router-link class="nav-link" to="/threads">
+              Threads
             </router-link>
           </li>
         </ul>

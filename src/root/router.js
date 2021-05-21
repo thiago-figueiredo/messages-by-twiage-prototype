@@ -3,7 +3,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import About from "../about/about.vue";
 import Contacts from "../contacts/contacts.vue";
 import Home from "../home/home.vue";
-import Messages from "../messages/messages.vue";
+import Threads from "../threads/threads.vue";
 
 const routes = [
   {
@@ -22,9 +22,9 @@ const routes = [
     component: Home,
   },
   {
-    path: "/messages",
-    name: "Messages",
-    component: Messages,
+    path: "/threads",
+    name: "Threads",
+    component: Threads,
   },
 ];
 
