@@ -4,7 +4,40 @@
     <keep-alive>
       <div>
         <pre>{{ error }}</pre>
-        <pre>{{ data }}</pre>
+        <div class="accordion" id="threads" v-if="data">
+          <div
+            class="accordion-item"
+            :key="thread.thread_id"
+            v-for="thread in data.thread"
+          >
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                :data-bs-target="`#thread_${thread.thread_id}`"
+                data-bs-toggle="collapse"
+              >
+                {{ thread.title }}
+              </button>
+            </h2>
+            <div
+              class="accordion-collapse collapse"
+              data-bs-parent="#threads"
+              :id="`thread_${thread.thread_id}`"
+            >
+              <div class="accordion-body">
+                <p :key="message.message_id" v-for="message in thread.messages">
+                  {{ message.content }}
+                  <br />
+                  <small class="text-muted">
+                    {{ message.contact.name }} @
+                    {{ message.created_at }}
+                  </small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </keep-alive>
   </div>
@@ -27,6 +60,8 @@ const threadsQuery = gql`
           contact_id
           name
         }
+        created_at
+        message_id
       }
       thread_contacts {
         contact {
