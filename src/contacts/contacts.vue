@@ -18,8 +18,8 @@ const contactsQuery = gql`
   subscription {
     contact {
       contact_id
-      name
       initials
+      name
     }
   }
 `;
