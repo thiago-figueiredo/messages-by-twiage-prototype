@@ -46,7 +46,11 @@
                     type="text"
                     v-model="messageInput"
                   />
-                  <button class="btn btn-outline-secondary" @click="sendMessage({ thread_id: thread.thread_id })" type="button">
+                  <button
+                    class="btn btn-outline-secondary"
+                    @click="sendMessage({ thread_id: thread.thread_id })"
+                    type="button"
+                  >
                     Send
                   </button>
                 </div>
@@ -61,62 +65,30 @@
 
 <script>
 import { useMutation, useSubscription } from "@urql/vue";
-import gql from "graphql-tag";
 import { ref } from "vue";
 
-const threadsQuery = gql`
-  subscription {
-    thread(order_by: { updated_at: desc }) {
-      messages(order_by: { created_at: asc }) {
-        contact {
-          contact_id
-          name
-        }
-        content
-        created_at
-        message_id
-      }
-      subtitle
-      thread_contacts {
-        contact {
-          contact_id
-          name
-        }
-      }
-      thread_id
-      title
-    }
-  }
-`;
-
-const sendMessageMutation = gql`
-  mutation($contact_id: String, $content: String, $thread_id: Int) {
-    insert_message_one(
-      object: {
-        contact_id: $contact_id
-        content: $content
-        thread_id: $thread_id
-      }
-    ) {
-      created_at
-      updated_at
-    }
-  }
-`;
+import { sendMessageMutation } from "./graphql/sendMessageMutation";
+import { threadsSubscription } from "./graphql/threadsSubscription";
 
 export default {
   setup() {
     const messageInput = ref("");
 
     const { data, error, fetching } = useSubscription({
-      query: threadsQuery,
+      query: threadsSubscription,
     });
 
-    const { executeMutation: executeSendMessageMutation } = useMutation(sendMessageMutation);
+    const { executeMutation: executeSendMessageMutation } = useMutation(
+      sendMessageMutation,
+    );
 
     const sendMessage = async ({ thread_id }) => {
       const contact_id = "609d948d0b6c656d5b143e19";
-      const { error } = await executeSendMessageMutation({ contact_id, content: messageInput.value, thread_id });
+      const { error } = await executeSendMessageMutation({
+        contact_id,
+        content: messageInput.value,
+        thread_id,
+      });
       console.log(error);
     };
 
