@@ -1,5 +1,5 @@
 <template>
-  <div className="container mt-4">
+  <div className="container mb-4 mt-4">
     <h1>Threads</h1>
     <keep-alive>
       <div>
@@ -26,14 +26,30 @@
               :id="`thread_${thread.thread_id}`"
             >
               <div class="accordion-body">
-                <p :key="message.message_id" v-for="message in thread.messages">
-                  {{ message.content }}
-                  <br />
-                  <small class="text-muted">
-                    {{ message.contact.name }} @
-                    {{ message.created_at }}
-                  </small>
-                </p>
+                <div class="mb-5">
+                  <p
+                    :key="message.message_id"
+                    v-for="message in thread.messages"
+                  >
+                    {{ message.content }}
+                    <br />
+                    <small class="text-muted">
+                      {{ message.contact.name }} @
+                      {{ message.created_at }}
+                    </small>
+                  </p>
+                </div>
+                <div class="input-group mb-3">
+                  <input
+                    class="form-control"
+                    placeholder="Say something..."
+                    type="text"
+                    v-model="messageInput"
+                  />
+                  <button class="btn btn-outline-secondary" @click="sendMessage({ thread_id: thread.thread_id })" type="button">
+                    Send
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -44,14 +60,14 @@
 </template>
 
 <script>
-import { useSubscription } from "@urql/vue";
+import { useMutation, useSubscription } from "@urql/vue";
 import gql from "graphql-tag";
-import { defineComponent } from "vue";
+import { ref } from "vue";
 
 const threadsQuery = gql`
   subscription {
-    thread {
-      messages {
+    thread(order_by: { updated_at: desc }) {
+      messages(order_by: { created_at: asc }) {
         contact {
           contact_id
           name
@@ -73,17 +89,44 @@ const threadsQuery = gql`
   }
 `;
 
-export default defineComponent({
+const sendMessageMutation = gql`
+  mutation($contact_id: String, $content: String, $thread_id: Int) {
+    insert_message_one(
+      object: {
+        contact_id: $contact_id
+        content: $content
+        thread_id: $thread_id
+      }
+    ) {
+      created_at
+      updated_at
+    }
+  }
+`;
+
+export default {
   setup() {
+    const messageInput = ref("");
+
     const { data, error, fetching } = useSubscription({
       query: threadsQuery,
     });
+
+    const { executeMutation: executeSendMessageMutation } = useMutation(sendMessageMutation);
+
+    const sendMessage = async ({ thread_id }) => {
+      const contact_id = "609d948d0b6c656d5b143e19";
+      const { error } = await executeSendMessageMutation({ contact_id, content: messageInput.value, thread_id });
+      console.log(error);
+    };
 
     return {
       data,
       error,
       fetching,
+      messageInput,
+      sendMessage,
     };
   },
-});
+};
 </script>
