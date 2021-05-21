@@ -12,33 +12,36 @@
 
 <script>
 import { useSubscription } from "@urql/vue";
+import gql from "graphql-tag";
 import { defineComponent } from "vue";
+
+const threadsQuery = gql`
+  subscription {
+    thread {
+      thread_id
+      title
+      subtitle
+      messages {
+        content
+        contact {
+          contact_id
+          name
+        }
+      }
+      thread_contacts {
+        contact {
+          contact_id
+          name
+        }
+      }
+    }
+  }
+`;
 
 export default defineComponent({
   setup() {
     const { data, error, fetching } = useSubscription({
-      query: `
-        subscription {
-          thread {
-            thread_id
-            title
-            subtitle
-            messages {
-              content
-              contact {
-                contact_id
-                name
-              }
-            }
-            thread_contacts {
-              contact {
-                contact_id
-                name
-              }
-            }
-          }
-        }
-      `,
+      query: threadsQuery,
     });
 
     return {

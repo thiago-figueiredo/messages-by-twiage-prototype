@@ -10,22 +10,24 @@
   </div>
 </template>
 
-
 <script>
 import { useSubscription } from "@urql/vue";
+import gql from "graphql-tag";
+
+const contactsQuery = gql`
+  subscription {
+    contact {
+      contact_id
+      name
+      initials
+    }
+  }
+`;
 
 export default {
   setup() {
     const { data, error, fetching } = useSubscription({
-      query: `
-        subscription {
-          contact {
-            contact_id
-            name
-            initials
-          }
-        }
-      `,
+      query: contactsQuery,
     });
 
     return {
