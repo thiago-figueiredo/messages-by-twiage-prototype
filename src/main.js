@@ -33,6 +33,11 @@ const urqlOptions = {
       },
     }),
   ],
+  fetchOptions: () => ({
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  }),
   url: urqlOptionsURL,
 };
 
