@@ -8,9 +8,6 @@
         />
       </router-link>
       <button
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
         class="navbar-toggler"
         data-bs-target="#navbarSupportedContent"
         data-bs-toggle="collapse"
@@ -18,7 +15,11 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div
+        class="collapse navbar-collapse"
+        id="navbarSupportedContent"
+        v-if="token"
+      >
         <ul class="mb-2 mb-lg-0 me-auto navbar-nav">
           <li class="nav-item">
             <router-link class="nav-link" to="/contacts">
@@ -26,27 +27,21 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/threads">
-              Threads
-            </router-link>
+            <router-link class="nav-link" to="/threads"> Threads </router-link>
           </li>
         </ul>
         <ul class="mb-2 mb-lg-0 navbar-nav">
           <li class="dropdown nav-item">
             <a
-              aria-expanded="false"
               class="nav-link dropdown-toggle"
               data-bs-toggle="dropdown"
               href="#"
               id="userMenuDropdown"
               role="button"
             >
-              tfigueiredo
+              {{ email }}
             </a>
-            <ul
-              aria-labelledby="userMenuDropdown"
-              class="dropdown-menu dropdown-menu-end"
-            >
+            <ul class="dropdown-menu dropdown-menu-end">
               <li>
                 <span class="dropdown-item text-muted">v{{ version }}</span>
               </li>
@@ -66,15 +61,29 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import jwt_decode from "jwt-decode";
+import { computed } from "vue";
 
 import { version } from "../../package.json";
 
-export default defineComponent({
-  setup() {
+export default {
+  props: {
+    token: String,
+  },
+
+  setup(props) {
+    const email = computed(() => {
+      if (props.token) {
+        const { email } = jwt_decode(props.token);
+
+        return email;
+      }
+    });
+
     return {
+      email,
       version,
     };
   },
-});
+};
 </script>
