@@ -10,7 +10,7 @@ import jwt_decode from "jwt-decode";
 
 import mainNavbar from "/src/main-navbar/main-navbar.vue";
 import { version } from "../../package.json";
-import { setupGraphQL } from "./graphql/setupGraphQL";
+import { setupGraphql } from "./graphql/setup-graphql";
 
 export default {
   components: { mainNavbar },
@@ -23,7 +23,7 @@ export default {
     try {
       ({ email } = jwt_decode(token));
 
-      setupGraphQL({ token });
+      setupGraphql({ token });
     } catch (error) {
       console.error(error);
 

@@ -39,22 +39,7 @@
                     </small>
                   </p>
                 </div>
-                <pre class="text-danger" v-if="sendMessageError.show">{{ `${sendMessageError.name}: ${sendMessageError.message}` }}</pre>
-                <div class="input-group mb-3">
-                  <input
-                    class="form-control"
-                    placeholder="Say something..."
-                    type="text"
-                    v-model="messageInput"
-                  />
-                  <button
-                    class="btn btn-outline-secondary"
-                    @click="sendMessage({ thread_id: thread.thread_id })"
-                    type="button"
-                  >
-                    Send
-                  </button>
-                </div>
+                <send-message :thread-id="thread.thread_id"></send-message>
               </div>
             </div>
           </div>
@@ -65,48 +50,25 @@
 </template>
 
 <script>
-import { useMutation, useSubscription } from "@urql/vue";
-import { reactive, ref } from "vue";
+import { useSubscription } from "@urql/vue";
 
-import { sendMessageMutation } from "./graphql/sendMessageMutation";
-import { threadsSubscription } from "./graphql/threadsSubscription";
+import { threadsSubscription } from "./graphql/threads-subscription";
+import sendMessage from "./components/send-message/send-message.vue";
 
 export default {
-  setup() {
-    const messageInput = ref("");
+  components: {
+    sendMessage,
+  },
 
+  setup() {
     const { data, error, fetching } = useSubscription({
       query: threadsSubscription,
     });
-
-    const { executeMutation: executeSendMessageMutation } = useMutation(
-      sendMessageMutation,
-    );
-
-    let sendMessageError = reactive({ message: '', name: '', show: false });
-
-    const sendMessage = async ({ thread_id }) => {
-      const { error } = await executeSendMessageMutation({
-        content: messageInput.value,
-        thread_id,
-      });
-
-      if (error) {
-        sendMessageError.message = error.message;
-        sendMessageError.name = error.name;
-        sendMessageError.show = true;
-      } else {
-        sendMessageError.show = false;
-      }
-    };
 
     return {
       data,
       error,
       fetching,
-      messageInput,
-      sendMessage,
-      sendMessageError,
     };
   },
 };

@@ -6,7 +6,7 @@ import {
 } from "@urql/vue";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
-export const setupGraphQL = ({ token }) => {
+export const setupGraphql = ({ token }) => {
   const accessToken = token;
   const urqlOptionsURL = import.meta.env.VITE_URQL_OPTIONS_URL;
   const subscriptionClientURL = import.meta.env.VITE_SUBSCRIPTION_CLIENT_URL;
