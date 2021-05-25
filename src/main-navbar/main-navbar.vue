@@ -12,6 +12,7 @@
         data-bs-target="#navbarSupportedContent"
         data-bs-toggle="collapse"
         type="button"
+        v-if="token"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
