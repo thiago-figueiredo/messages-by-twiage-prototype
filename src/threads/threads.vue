@@ -83,9 +83,7 @@ export default {
     );
 
     const sendMessage = async ({ thread_id }) => {
-      const contact_id = "609d948d0b6c656d5b143e19";
       const { error } = await executeSendMessageMutation({
-        contact_id,
         content: messageInput.value,
         thread_id,
       });
