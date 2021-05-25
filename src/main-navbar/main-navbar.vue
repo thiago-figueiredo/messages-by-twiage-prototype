@@ -12,14 +12,14 @@
         data-bs-target="#navbarSupportedContent"
         data-bs-toggle="collapse"
         type="button"
-        v-if="token"
+        v-if="email"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
       <div
         class="collapse navbar-collapse"
         id="navbarSupportedContent"
-        v-if="token"
+        v-if="email"
       >
         <ul class="mb-2 mb-lg-0 me-auto navbar-nav">
           <li class="nav-item">
@@ -62,29 +62,10 @@
 </template>
 
 <script>
-import jwt_decode from "jwt-decode";
-import { computed } from "vue";
-
-import { version } from "../../package.json";
-
 export default {
   props: {
-    token: String,
-  },
-
-  setup(props) {
-    const email = computed(() => {
-      if (props.token) {
-        const { email } = jwt_decode(props.token);
-
-        return email;
-      }
-    });
-
-    return {
-      email,
-      version,
-    };
+    email: String,
+    version: String,
   },
 };
 </script>
