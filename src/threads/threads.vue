@@ -3,7 +3,7 @@
     <h1>Threads</h1>
     <keep-alive>
       <div>
-        <pre>{{ error }}</pre>
+        <pre class="text-danger">{{ error }}</pre>
         <div class="accordion" id="threads" v-if="data">
           <div
             class="accordion-item"
@@ -17,7 +17,7 @@
                 data-bs-toggle="collapse"
                 type="button"
               >
-                {{ thread.title }}
+                {{ thread.title }} (thread_id:{{ thread.thread_id }})
               </button>
             </h2>
             <div
@@ -39,6 +39,7 @@
                     </small>
                   </p>
                 </div>
+                <pre class="text-danger" v-if="sendMessageError.show">{{ `${sendMessageError.name}: ${sendMessageError.message}` }}</pre>
                 <div class="input-group mb-3">
                   <input
                     class="form-control"
@@ -65,7 +66,7 @@
 
 <script>
 import { useMutation, useSubscription } from "@urql/vue";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 
 import { sendMessageMutation } from "./graphql/sendMessageMutation";
 import { threadsSubscription } from "./graphql/threadsSubscription";
@@ -82,12 +83,21 @@ export default {
       sendMessageMutation,
     );
 
+    let sendMessageError = reactive({ message: '', name: '', show: false });
+
     const sendMessage = async ({ thread_id }) => {
       const { error } = await executeSendMessageMutation({
         content: messageInput.value,
         thread_id,
       });
-      console.log(error);
+
+      if (error) {
+        sendMessageError.message = error.message;
+        sendMessageError.name = error.name;
+        sendMessageError.show = true;
+      } else {
+        sendMessageError.show = false;
+      }
     };
 
     return {
@@ -96,6 +106,7 @@ export default {
       fetching,
       messageInput,
       sendMessage,
+      sendMessageError,
     };
   },
 };
